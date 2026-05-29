@@ -1,248 +1,584 @@
-# Remove the line below if you want to inherit .editorconfig settings from higher directories
-root = true
+# AeroSoil AI - Web API .NET 8
 
-# C# files
-[*.cs]
+## Descrição do Projeto
 
-#### Core EditorConfig Options ####
+O **AeroSoil AI** é uma Web API desenvolvida em **.NET 8** para uma plataforma de agricultura de precisão. A solução conecta o conceito de economia espacial, com uso futuro de dados orbitais de satélites para análise climática e umidade, a sensores IoT locais instalados no solo, como sensores de umidade e luminosidade.
 
-# Indentation and spacing
-indent_size = 4
-indent_style = space
-tab_width = 4
+A API permite o cadastro de propriedades agrícolas e seus sensores, fornecendo uma base relacional para monitoramento de dados ambientais e apoio à tomada de decisão sobre irrigação.
 
-# New line preferences
-end_of_line = crlf
-insert_final_newline = false
+Este projeto foi desenvolvido para a disciplina **Advanced Business Development with .NET**, da FIAP, atendendo aos requisitos técnicos solicitados para a Global Solution.
 
-#### .NET Code Actions ####
+---
 
-# Type members
-dotnet_hide_advanced_members = false
-dotnet_member_insertion_location = with_other_members_of_the_same_kind
-dotnet_property_generation_behavior = prefer_throwing_properties
+## Tecnologias Utilizadas
 
-# Symbol search
-dotnet_search_reference_assemblies = true
+- .NET 8
+- ASP.NET Core Web API
+- Entity Framework Core
+- Oracle Database
+- Oracle.EntityFrameworkCore
+- Migrations
+- Swagger / OpenAPI
+- C#
+- REST API
 
-#### .NET Coding Conventions ####
+---
 
-# Organize usings
-dotnet_separate_import_directive_groups = false
-dotnet_sort_system_directives_first = false
-file_header_template = unset
+## Arquitetura do Projeto
 
-# this. and Me. preferences
-dotnet_style_qualification_for_event = false
-dotnet_style_qualification_for_field = false
-dotnet_style_qualification_for_method = false
-dotnet_style_qualification_for_property = false
+O projeto foi organizado em camadas simples, separando responsabilidades de forma clara:
 
-# Language keywords vs BCL types preferences
-dotnet_style_predefined_type_for_locals_parameters_members = true
-dotnet_style_predefined_type_for_member_access = true
+```txt
+AeroSoilAI.Api/
+├── Controllers/
+│   └── PropriedadesController.cs
+├── Data/
+│   └── AppDbContext.cs
+├── Dtos/
+│   ├── PropriedadeCreateDto.cs
+│   ├── PropriedadeResponseDto.cs
+│   ├── PropriedadeUpdateDto.cs
+│   └── SensorDto.cs
+├── Enums/
+│   └── SensorTipo.cs
+├── Models/
+│   ├── Propriedade.cs
+│   └── Sensor.cs
+├── Migrations/
+├── appsettings.json
+├── Program.cs
+└── AeroSoilAI.Api.csproj
+```
 
-# Parentheses preferences
-dotnet_style_parentheses_in_arithmetic_binary_operators = always_for_clarity
-dotnet_style_parentheses_in_other_binary_operators = always_for_clarity
-dotnet_style_parentheses_in_other_operators = never_if_unnecessary
-dotnet_style_parentheses_in_relational_binary_operators = always_for_clarity
+### Responsabilidades
 
-# Modifier preferences
-dotnet_style_require_accessibility_modifiers = for_non_interface_members
+- **Models**: representam as entidades do domínio e o mapeamento com o banco.
+- **Dtos**: definem os contratos de entrada e saída da API.
+- **Data**: contém o `AppDbContext`, responsável pela configuração do Entity Framework Core.
+- **Controllers**: expõem os endpoints REST da aplicação.
+- **Enums**: centralizam tipos fixos usados no projeto, como o tipo do sensor.
 
-# Expression-level preferences
-dotnet_prefer_system_hash_code = true
-dotnet_style_coalesce_expression = true
-dotnet_style_collection_initializer = true
-dotnet_style_explicit_tuple_names = true
-dotnet_style_namespace_match_folder = true
-dotnet_style_null_propagation = true
-dotnet_style_object_initializer = true
-dotnet_style_operator_placement_when_wrapping = beginning_of_line
-dotnet_style_prefer_auto_properties = true
-dotnet_style_prefer_collection_expression = when_types_loosely_match
-dotnet_style_prefer_compound_assignment = true
-dotnet_style_prefer_conditional_expression_over_assignment = true
-dotnet_style_prefer_conditional_expression_over_return = true
-dotnet_style_prefer_foreach_explicit_cast_in_source = when_strongly_typed
-dotnet_style_prefer_inferred_anonymous_type_member_names = true
-dotnet_style_prefer_inferred_tuple_names = true
-dotnet_style_prefer_is_null_check_over_reference_equality_method = true
-dotnet_style_prefer_non_hidden_explicit_cast_in_source = true
-dotnet_style_prefer_simplified_boolean_expressions = true
-dotnet_style_prefer_simplified_interpolation = true
+---
 
-# Field preferences
-dotnet_style_readonly_field = true
+## Modelagem Relacional
 
-# Parameter preferences
-dotnet_code_quality_unused_parameters = all
+O projeto implementa um relacionamento **1:N** entre `Propriedade` e `Sensor`.
 
-# Suppression preferences
-dotnet_remove_unnecessary_suppression_exclusions = none
+Uma propriedade pode possuir vários sensores, mas cada sensor pertence a apenas uma propriedade.
 
-# New line preferences
-dotnet_style_allow_multiple_blank_lines_experimental = true
-dotnet_style_allow_statement_immediately_after_block_experimental = true
+```txt
+TB_PROPRIEDADE 1 ─────── N TB_SENSOR
+```
 
-#### C# Coding Conventions ####
+### Entidade Propriedade
 
-# var preferences
-csharp_style_var_elsewhere = false
-csharp_style_var_for_built_in_types = false
-csharp_style_var_when_type_is_apparent = false
+Campos principais:
 
-# Expression-bodied members
-csharp_style_expression_bodied_accessors = true
-csharp_style_expression_bodied_constructors = false
-csharp_style_expression_bodied_indexers = true
-csharp_style_expression_bodied_lambdas = true
-csharp_style_expression_bodied_local_functions = false
-csharp_style_expression_bodied_methods = false
-csharp_style_expression_bodied_operators = false
-csharp_style_expression_bodied_properties = true
+- `Id`
+- `Nome`
+- `Localizacao`
+- `Hectares`
+- `Sensores`
 
-# Pattern matching preferences
-csharp_style_pattern_matching_over_as_with_null_check = true
-csharp_style_pattern_matching_over_is_with_cast_check = true
-csharp_style_prefer_extended_property_pattern = true
-csharp_style_prefer_not_pattern = true
-csharp_style_prefer_pattern_matching = true
-csharp_style_prefer_switch_expression = true
+### Entidade Sensor
 
-# Null-checking preferences
-csharp_style_conditional_delegate_call = true
+Campos principais:
 
-# Modifier preferences
-csharp_prefer_static_anonymous_function = true
-csharp_prefer_static_local_function = true
-csharp_preferred_modifier_order = public,private,protected,internal,file,static,extern,new,virtual,abstract,sealed,override,readonly,unsafe,required,volatile,async
-csharp_style_prefer_readonly_struct = true
-csharp_style_prefer_readonly_struct_member = true
+- `Id`
+- `Tipo`
+- `UltimaLeitura`
+- `DataAtualizacao`
+- `PropriedadeId`
+- `Propriedade`
 
-# Code-block preferences
-csharp_prefer_braces = true
-csharp_prefer_simple_using_statement = true
-csharp_prefer_system_threading_lock = true
-csharp_style_namespace_declarations = block_scoped
-csharp_style_prefer_method_group_conversion = true
-csharp_style_prefer_primary_constructors = true
-csharp_style_prefer_simple_property_accessors = true
-csharp_style_prefer_top_level_statements = true
+---
 
-# Expression-level preferences
-csharp_prefer_simple_default_expression = true
-csharp_style_deconstructed_variable_declaration = true
-csharp_style_implicit_object_creation_when_type_is_apparent = true
-csharp_style_inlined_variable_declaration = true
-csharp_style_prefer_implicitly_typed_lambda_expression = true
-csharp_style_prefer_index_operator = true
-csharp_style_prefer_local_over_anonymous_function = true
-csharp_style_prefer_null_check_over_type_check = true
-csharp_style_prefer_range_operator = true
-csharp_style_prefer_tuple_swap = true
-csharp_style_prefer_unbound_generic_type_in_nameof = true
-csharp_style_prefer_utf8_string_literals = true
-csharp_style_throw_expression = true
-csharp_style_unused_value_assignment_preference = discard_variable
-csharp_style_unused_value_expression_statement_preference = discard_variable
+## Diagrama das Entidades
 
-# 'using' directive preferences
-csharp_using_directive_placement = outside_namespace
+```mermaid
+erDiagram
+    TB_PROPRIEDADE ||--o{ TB_SENSOR : possui
 
-# New line preferences
-csharp_style_allow_blank_line_after_colon_in_constructor_initializer_experimental = true
-csharp_style_allow_blank_line_after_token_in_arrow_expression_clause_experimental = true
-csharp_style_allow_blank_line_after_token_in_conditional_expression_experimental = true
-csharp_style_allow_blank_lines_between_consecutive_braces_experimental = true
-csharp_style_allow_embedded_statements_on_same_line_experimental = true
+    TB_PROPRIEDADE {
+        int ID_PROPRIEDADE PK
+        string NM_PROPRIEDADE
+        string DS_LOCALIZACAO
+        decimal NR_HECTARES
+    }
 
-#### C# Formatting Rules ####
+    TB_SENSOR {
+        int ID_SENSOR PK
+        string TP_SENSOR
+        decimal VL_ULTIMA_LEITURA
+        datetime DT_ATUALIZACAO
+        int ID_PROPRIEDADE FK
+    }
+```
 
-# New line preferences
-csharp_new_line_before_catch = true
-csharp_new_line_before_else = true
-csharp_new_line_before_finally = true
-csharp_new_line_before_members_in_anonymous_types = true
-csharp_new_line_before_members_in_object_initializers = true
-csharp_new_line_before_open_brace = all
-csharp_new_line_between_query_expression_clauses = true
+---
 
-# Indentation preferences
-csharp_indent_block_contents = true
-csharp_indent_braces = false
-csharp_indent_case_contents = true
-csharp_indent_case_contents_when_block = true
-csharp_indent_labels = one_less_than_current
-csharp_indent_switch_labels = true
+## Banco de Dados
 
-# Space preferences
-csharp_space_after_cast = false
-csharp_space_after_colon_in_inheritance_clause = true
-csharp_space_after_comma = true
-csharp_space_after_dot = false
-csharp_space_after_keywords_in_control_flow_statements = true
-csharp_space_after_semicolon_in_for_statement = true
-csharp_space_around_binary_operators = before_and_after
-csharp_space_around_declaration_statements = false
-csharp_space_before_colon_in_inheritance_clause = true
-csharp_space_before_comma = false
-csharp_space_before_dot = false
-csharp_space_before_open_square_brackets = false
-csharp_space_before_semicolon_in_for_statement = false
-csharp_space_between_empty_square_brackets = false
-csharp_space_between_method_call_empty_parameter_list_parentheses = false
-csharp_space_between_method_call_name_and_opening_parenthesis = false
-csharp_space_between_method_call_parameter_list_parentheses = false
-csharp_space_between_method_declaration_empty_parameter_list_parentheses = false
-csharp_space_between_method_declaration_name_and_open_parenthesis = false
-csharp_space_between_method_declaration_parameter_list_parentheses = false
-csharp_space_between_parentheses = false
-csharp_space_between_square_brackets = false
+A aplicação utiliza **Oracle Database** com Entity Framework Core.
 
-# Wrapping preferences
-csharp_preserve_single_line_blocks = true
-csharp_preserve_single_line_statements = true
+As tabelas criadas pela migration seguem o padrão corporativo:
 
-#### Naming styles ####
+```txt
+TB_PROPRIEDADE
+TB_SENSOR
+```
 
-# Naming rules
+O relacionamento entre as tabelas é configurado por chave estrangeira:
 
-dotnet_naming_rule.interface_should_be_begins_with_i.severity = suggestion
-dotnet_naming_rule.interface_should_be_begins_with_i.symbols = interface
-dotnet_naming_rule.interface_should_be_begins_with_i.style = begins_with_i
+```txt
+TB_SENSOR.ID_PROPRIEDADE -> TB_PROPRIEDADE.ID_PROPRIEDADE
+```
 
-dotnet_naming_rule.types_should_be_pascal_case.severity = suggestion
-dotnet_naming_rule.types_should_be_pascal_case.symbols = types
-dotnet_naming_rule.types_should_be_pascal_case.style = pascal_case
+---
 
-dotnet_naming_rule.non_field_members_should_be_pascal_case.severity = suggestion
-dotnet_naming_rule.non_field_members_should_be_pascal_case.symbols = non_field_members
-dotnet_naming_rule.non_field_members_should_be_pascal_case.style = pascal_case
+## Validações
 
-# Symbol specifications
+O projeto utiliza **Data Annotations** para validação dos dados de entrada.
 
-dotnet_naming_symbols.interface.applicable_kinds = interface
-dotnet_naming_symbols.interface.applicable_accessibilities = public, internal, private, protected, protected_internal, private_protected
-dotnet_naming_symbols.interface.required_modifiers = 
+Exemplos de validações implementadas:
 
-dotnet_naming_symbols.types.applicable_kinds = class, struct, interface, enum
-dotnet_naming_symbols.types.applicable_accessibilities = public, internal, private, protected, protected_internal, private_protected
-dotnet_naming_symbols.types.required_modifiers = 
+- Nome da propriedade obrigatório.
+- Nome com tamanho mínimo e máximo.
+- Localização obrigatória.
+- Hectares maior que zero.
+- Tipo do sensor obrigatório.
+- Última leitura do sensor não pode ser negativa.
 
-dotnet_naming_symbols.non_field_members.applicable_kinds = property, event, method
-dotnet_naming_symbols.non_field_members.applicable_accessibilities = public, internal, private, protected, protected_internal, private_protected
-dotnet_naming_symbols.non_field_members.required_modifiers = 
+Quando uma entrada inválida é enviada, a API retorna:
 
-# Naming styles
+```txt
+400 Bad Request
+```
 
-dotnet_naming_style.pascal_case.required_prefix = 
-dotnet_naming_style.pascal_case.required_suffix = 
-dotnet_naming_style.pascal_case.word_separator = 
-dotnet_naming_style.pascal_case.capitalization = pascal_case
+---
 
-dotnet_naming_style.begins_with_i.required_prefix = I
-dotnet_naming_style.begins_with_i.required_suffix = 
-dotnet_naming_style.begins_with_i.word_separator = 
-dotnet_naming_style.begins_with_i.capitalization = pascal_case
+## Configuração de CORS
+
+O projeto possui uma política de CORS chamada `AllowAll`, configurada no `Program.cs`.
+
+Essa configuração permite que a API seja consumida futuramente por aplicações externas, como um aplicativo em React Native.
+
+```csharp
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy
+            .AllowAnyOrigin()
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
+```
+
+---
+
+## Configuração do Banco Oracle
+
+No arquivo `appsettings.json`, configure a connection string com suas credenciais do Oracle:
+
+```json
+{
+  "ConnectionStrings": {
+    "OracleConnection": "User Id=SECRETO;Password=SECRETO;Data Source=oracle.fiap.com.br:1521/ORCL"
+  }
+}
+```
+
+> Observação: não é recomendado subir senha real no GitHub. Use valores genéricos no repositório e configure suas credenciais localmente.
+
+---
+
+## Como Executar o Projeto
+
+### 1. Clonar o repositório
+
+```bash
+git clone https://github.com/thomasmfontes/aerosoil-ai-dotnet-api.git
+cd AeroSoilAI.Api
+```
+
+### 2. Restaurar os pacotes
+
+```bash
+dotnet restore
+```
+
+### 3. Compilar o projeto
+
+```bash
+dotnet build
+```
+
+### 4. Criar a migration
+
+```bash
+dotnet ef migrations add InitialCreate
+```
+
+### 5. Aplicar a migration no Oracle
+
+```bash
+dotnet ef database update
+```
+
+### 6. Rodar a aplicação
+
+```bash
+dotnet run
+```
+
+### 7. Acessar o Swagger
+
+Acesse no navegador:
+
+```txt
+https://localhost:PORTA/swagger
+```
+
+A porta pode variar conforme o ambiente local.
+
+---
+
+## Endpoints da API
+
+### Listar propriedades
+
+```http
+GET /api/Propriedades
+```
+
+Retorna todas as propriedades cadastradas com seus sensores.
+
+Quando não houver propriedades cadastradas, a API retorna:
+
+```json
+{
+  "mensagem": "Nenhuma propriedade cadastrada no momento."
+}
+```
+
+Status:
+
+```txt
+404 Not Found
+```
+
+---
+
+### Buscar propriedade por ID
+
+```http
+GET /api/Propriedades/{id}
+```
+
+Retorna uma propriedade específica pelo ID.
+
+Caso o ID não exista:
+
+```json
+{
+  "mensagem": "Nenhuma propriedade encontrada com o ID informado."
+}
+```
+
+Status:
+
+```txt
+404 Not Found
+```
+
+---
+
+### Criar propriedade
+
+```http
+POST /api/Propriedades
+```
+
+Exemplo de body:
+
+```json
+{
+  "nome": "Fazenda AeroSoil Alpha",
+  "localizacao": "São José dos Campos - SP",
+  "hectares": 87.5,
+  "sensores": [
+    {
+      "tipo": "Umidade",
+      "ultimaLeitura": 38.75,
+      "dataAtualizacao": "2026-01-01T12:00:00Z"
+    },
+    {
+      "tipo": "LDR",
+      "ultimaLeitura": 920,
+      "dataAtualizacao": "2026-01-01T12:05:00Z"
+    }
+  ]
+}
+```
+
+Resposta esperada:
+
+```txt
+201 Created
+```
+
+O endpoint utiliza `CreatedAtAction` para retornar o recurso criado.
+
+---
+
+### Atualizar propriedade
+
+```http
+PUT /api/Propriedades/{id}
+```
+
+Exemplo de body:
+
+```json
+{
+  "nome": "Fazenda AeroSoil Alpha Atualizada",
+  "localizacao": "Campinas - SP",
+  "hectares": 95.25
+}
+```
+
+Resposta esperada:
+
+```txt
+200 OK
+```
+
+Caso o ID não exista:
+
+```txt
+404 Not Found
+```
+
+---
+
+### Remover propriedade
+
+```http
+DELETE /api/Propriedades/{id}
+```
+
+Resposta esperada:
+
+```txt
+204 No Content
+```
+
+Caso o ID não exista:
+
+```txt
+404 Not Found
+```
+
+---
+
+## Exemplos de Testes no Swagger
+
+### Teste 1 - Criar propriedade válida
+
+Endpoint:
+
+```http
+POST /api/Propriedades
+```
+
+Body:
+
+```json
+{
+  "nome": "Fazenda AeroSoil Alpha",
+  "localizacao": "São José dos Campos - SP",
+  "hectares": 87.5,
+  "sensores": [
+    {
+      "tipo": "Umidade",
+      "ultimaLeitura": 38.75,
+      "dataAtualizacao": "2026-01-01T12:00:00Z"
+    }
+  ]
+}
+```
+
+Resultado esperado:
+
+```txt
+201 Created
+```
+
+---
+
+### Teste 2 - Criar propriedade inválida
+
+Endpoint:
+
+```http
+POST /api/Propriedades
+```
+
+Body:
+
+```json
+{
+  "nome": "",
+  "localizacao": "",
+  "hectares": 0,
+  "sensores": []
+}
+```
+
+Resultado esperado:
+
+```txt
+400 Bad Request
+```
+
+---
+
+### Teste 3 - Buscar propriedades
+
+Endpoint:
+
+```http
+GET /api/Propriedades
+```
+
+Resultado esperado quando houver dados:
+
+```txt
+200 OK
+```
+
+Resultado esperado quando não houver dados:
+
+```txt
+404 Not Found
+```
+
+---
+
+### Teste 4 - Atualizar propriedade
+
+Endpoint:
+
+```http
+PUT /api/Propriedades/{id}
+```
+
+Resultado esperado:
+
+```txt
+200 OK
+```
+
+---
+
+### Teste 5 - Remover propriedade
+
+Endpoint:
+
+```http
+DELETE /api/Propriedades/{id}
+```
+
+Resultado esperado:
+
+```txt
+204 No Content
+```
+
+---
+
+## Migrations
+
+O projeto utiliza migrations para versionamento da estrutura do banco de dados.
+
+Comandos principais:
+
+```bash
+dotnet ef migrations add InitialCreate
+```
+
+```bash
+dotnet ef database update
+```
+
+Caso seja necessário desfazer a migration aplicada durante testes locais:
+
+```bash
+dotnet ef database update 0
+```
+
+```bash
+dotnet ef migrations remove
+```
+
+---
+
+## Boas Práticas Aplicadas
+
+- Separação de responsabilidades por pastas.
+- Uso de DTOs para entrada e saída de dados.
+- Uso de Entity Framework Core com Oracle.
+- Configuração de relacionamento por Data Annotations e Fluent API.
+- Uso de migrations para criação e versionamento do banco.
+- Uso correto de verbos HTTP.
+- Respostas HTTP padronizadas.
+- Tratamento de entradas inválidas.
+- CORS configurado para consumo externo.
+- Swagger habilitado para documentação e testes.
+
+---
+
+## Como o Projeto Atende aos Requisitos
+
+| Requisito | Implementação |
+|---|---|
+| API REST e/ou MVC | Web API REST em .NET 8 |
+| Banco relacional | Oracle Database |
+| ORM | Entity Framework Core |
+| Relacionamento 1:N | Propriedade possui vários Sensores |
+| Data Annotations | Models e DTOs com validações |
+| Fluent API | Configurada no AppDbContext |
+| Migration | InitialCreate criada e aplicada |
+| CRUD completo | Controller de Propriedades |
+| CORS | Política AllowAll no Program.cs |
+| Tratamento de erros | BadRequest, NotFound, NoContent |
+| Retorno de criação | CreatedAtAction |
+
+---
+
+## Explicação para Apresentação
+
+A aplicação foi organizada em camadas simples para separar as responsabilidades do projeto. As entidades `Propriedade` e `Sensor` representam o domínio da aplicação. A camada `Data` centraliza o contexto do Entity Framework Core e a configuração do banco Oracle. Os `DTOs` são utilizados para controlar os dados recebidos e retornados pela API. O controller expõe as rotas REST, implementando o CRUD completo da entidade principal.
+
+O relacionamento implementado é de um para muitos: uma propriedade agrícola pode possuir vários sensores físicos instalados no solo, enquanto cada sensor pertence a uma única propriedade. Esse relacionamento é refletido no banco pelas tabelas `TB_PROPRIEDADE` e `TB_SENSOR`.
+
+As migrations foram utilizadas para criar e versionar a estrutura do banco de dados, permitindo que o schema seja reproduzido a partir do código. A API também possui validações de entrada com Data Annotations e retorna respostas HTTP adequadas para cada situação.
+
+---
+
+## Status do Projeto
+
+Projeto funcional e pronto para demonstração acadêmica.
+
+Principais funcionalidades disponíveis:
+
+- Cadastro de propriedades.
+- Listagem de propriedades.
+- Busca por ID.
+- Atualização de propriedades.
+- Remoção de propriedades.
+- Cadastro de sensores vinculados à propriedade no momento da criação.
+- Persistência dos dados no Oracle Database.
+- Testes via Swagger.
