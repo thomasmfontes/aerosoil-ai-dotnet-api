@@ -1,8 +1,9 @@
-﻿using AeroSoilAI.Api.Data;
+using AeroSoilAI.Api.Data;
 using AeroSoilAI.Api.Dtos;
 using AeroSoilAI.Api.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace AeroSoilAI.Api.Controllers;
 
@@ -17,7 +18,20 @@ public class PropriedadesController : ControllerBase
         _context = context;
     }
 
+    /// <summary>
+    /// Recupera todas as propriedades registradas.
+    /// </summary>
+    /// <remarks>
+    /// Retorna uma lista completa com todas as propriedades rurais cadastradas no sistema,
+    /// incluindo os sensores associados a cada uma delas.
+    /// </remarks>
+    /// <response code="200">Retorna a lista de propriedades encontradas.</response>
+    /// <response code="404">Caso nenhuma propriedade esteja cadastrada no banco de dados.</response>
     [HttpGet]
+    [SwaggerOperation(
+        Summary = "Obtém todas as propriedades",
+        Description = "Retorna uma lista com todas as propriedades cadastradas no sistema, incluindo seus respectivos sensores."
+    )]
     [ProducesResponseType(typeof(IEnumerable<PropriedadeResponseDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<IEnumerable<PropriedadeResponseDto>>> GetAll()
@@ -53,7 +67,20 @@ public class PropriedadesController : ControllerBase
         return Ok(propriedades);
     }
 
+    /// <summary>
+    /// Recupera uma propriedade específica pelo ID.
+    /// </summary>
+    /// <remarks>
+    /// Busca e retorna os detalhes de uma propriedade cadastrada com base em seu identificador único.
+    /// </remarks>
+    /// <param name="id">Identificador único da propriedade.</param>
+    /// <response code="200">Retorna os detalhes da propriedade solicitada.</response>
+    /// <response code="404">Caso não exista nenhuma propriedade com o ID informado.</response>
     [HttpGet("{id:int}")]
+    [SwaggerOperation(
+        Summary = "Obtém uma propriedade por ID",
+        Description = "Busca os detalhes de uma propriedade cadastrada com base em seu identificador único."
+    )]
     [ProducesResponseType(typeof(PropriedadeResponseDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<PropriedadeResponseDto>> GetById(int id)
@@ -89,7 +116,37 @@ public class PropriedadesController : ControllerBase
         return Ok(propriedade);
     }
 
+    /// <summary>
+    /// Cadastra uma nova propriedade.
+    /// </summary>
+    /// <remarks>
+    /// Cria um novo registro de propriedade no sistema juntamente com os sensores fornecidos no payload.
+    /// 
+    /// Exemplo de payload:
+    /// 
+    ///     POST /api/Propriedades
+    ///     {
+    ///        "nome": "Fazenda Sol Nascente",
+    ///        "localizacao": "Ribeirão Preto - SP",
+    ///        "hectares": 120.5,
+    ///        "sensores": [
+    ///           {
+    ///              "tipo": "Umidade",
+    ///              "ultimaLeitura": 45.2,
+    ///              "dataAtualizacao": "2026-06-09T19:24:00Z"
+    ///           }
+    ///        ]
+    ///     }
+    /// 
+    /// </remarks>
+    /// <param name="dto">Dados de criação da propriedade.</param>
+    /// <response code="201">Propriedade criada com sucesso.</response>
+    /// <response code="400">Dados inválidos fornecidos no payload.</response>
     [HttpPost]
+    [SwaggerOperation(
+        Summary = "Cadastra uma nova propriedade",
+        Description = "Cria um novo registro de propriedade no sistema juntamente com os sensores fornecidos no payload."
+    )]
     [ProducesResponseType(typeof(PropriedadeResponseDto), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<PropriedadeResponseDto>> Create([FromBody] PropriedadeCreateDto dto)
@@ -135,7 +192,23 @@ public class PropriedadesController : ControllerBase
         return CreatedAtAction(nameof(GetById), new { id = propriedade.Id }, response);
     }
 
+    /// <summary>
+    /// Atualiza uma propriedade existente.
+    /// </summary>
+    /// <remarks>
+    /// Atualiza as informações básicas (nome, localização, hectares) de uma propriedade específica identificada pelo ID da rota.
+    /// Não altera sensores diretamente por meio deste endpoint.
+    /// </remarks>
+    /// <param name="id">Identificador da propriedade a ser atualizada.</param>
+    /// <param name="dto">Dados atualizados da propriedade.</param>
+    /// <response code="200">Propriedade atualizada com sucesso.</response>
+    /// <response code="400">ID da rota inválido (menor ou igual a zero) ou dados do payload inválidos.</response>
+    /// <response code="404">Propriedade não encontrada.</response>
     [HttpPut("{id:int}")]
+    [SwaggerOperation(
+        Summary = "Atualiza uma propriedade existente",
+        Description = "Atualiza as informações básicas (nome, localização, hectares) de uma propriedade específica. Não altera sensores diretamente."
+    )]
     [ProducesResponseType(typeof(PropriedadeResponseDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -190,7 +263,20 @@ public class PropriedadesController : ControllerBase
         return Ok(response);
     }
 
+    /// <summary>
+    /// Remove uma propriedade pelo ID.
+    /// </summary>
+    /// <remarks>
+    /// Exclui definitivamente uma propriedade e todos os sensores vinculados a ela do banco de dados.
+    /// </remarks>
+    /// <param name="id">Identificador único da propriedade a ser removida.</param>
+    /// <response code="204">Propriedade removida com sucesso.</response>
+    /// <response code="404">Propriedade não encontrada.</response>
     [HttpDelete("{id:int}")]
+    [SwaggerOperation(
+        Summary = "Remove uma propriedade pelo ID",
+        Description = "Exclui definitivamente uma propriedade e seus sensores vinculados do banco de dados."
+    )]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult> Delete(int id)
