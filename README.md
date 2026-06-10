@@ -16,7 +16,7 @@ Este projeto foi desenvolvido para a disciplina **Advanced Business Development 
 Link: https://youtu.be/8q3S8x37NWU
 
 ### Pitch
-Link: A inserir após gravação.
+Link: https://www.youtube.com/watch?v=CIsyaxUGIus
 
 ---
 
