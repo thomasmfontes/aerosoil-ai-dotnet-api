@@ -10,6 +10,16 @@ Este projeto foi desenvolvido para a disciplina **Advanced Business Development 
 
 ---
 
+## Vídeos da Entrega
+
+### Demonstração Técnica
+Link: https://youtu.be/8q3S8x37NWU
+
+### Pitch
+Link: A inserir após gravação.
+
+---
+
 ## Tecnologias Utilizadas
 
 - .NET 8
